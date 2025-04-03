@@ -4,11 +4,11 @@
 ## Install
 
 ```py
-!pip install py_helpers
+!pip install py-helpers-lib
 ```
 
 ```py
-from py_helpers import *
+from py_helpers_lib import *
 ```
 
 
