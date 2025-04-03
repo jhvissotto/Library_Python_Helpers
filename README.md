@@ -1,6 +1,6 @@
 # Python Helpers Library (No Black Box Definitions)
 
-## About
+## Ecosystem
 
 ⭐ Portal:     https://bit.ly/finance_analytics  
 📊 Blog:       https://slashpage.com/jh-analytics  
