@@ -1,6 +1,6 @@
 [project]
 name = "py-helpers"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python Helpers"
 authors = [
     {name = "Jose_Henrique_V"}
