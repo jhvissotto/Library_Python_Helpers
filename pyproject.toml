@@ -1,6 +1,6 @@
 [project]
 name = "py-helpers-lib"
-version = "0.1.3"
+version = "0.1.4"
 description = "Python Helpers Library"
 authors = [
     {name = "Jose_Henrique_V"}
@@ -11,7 +11,7 @@ requires-python = ">=3.11"
 dependencies = ["joblib", "numpy", "scipy", "pandas"]
 
 [tool.poetry]
-packages = [{include = "py_helpers", from = "src"}]
+packages = [{include = "py_helpers_lib", from = "src"}]
 
 
 [build-system]
