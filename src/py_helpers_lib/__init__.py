@@ -91,7 +91,7 @@ def _pct_gstd(x):    return _pct(x, _gstd)
 
 
 
-def _Range(Max, Min):               return (Max - Min)
+def _range(Max, Min):               return (Max - Min)
 def _IQR(Q3, Q1):                   return (Q3 - Q1)
 
 def _minmax(Val, Min, Range):       return (Val - Min) / Range *100
@@ -107,41 +107,41 @@ def _log1p_zscore(val, avg, dev):   return (log(1+val/100) - log(1+avg/100)) / l
 # ============================================================= #
 # ======================== Functions 2 ======================== #
 # ============================================================= #
-def Groupby(Df, By=''):
+def _groupby(Df, By=''):
     if By:  return Df.groupby(By, sort=0, group_keys=0, dropna=0)
     else:   return Df
 
-def Roll(Df, Col, Lambda, win, wmin, By='', stp=nan, R=nan):
-    return _round(Groupby(_step(Df, stp), By)[Col].rolling(win, wmin).apply(Lambda).reset_index(0,drop=1), R)
+def _roll(Df, Col, Lambda, win, wmin, By='', stp=nan, R=nan):
+    return _round(_groupby(_step(Df, stp), By)[Col].rolling(win, wmin).apply(Lambda).reset_index(0,drop=1), R)
 
 
 
-def Mean      (Df, Col, win, wmin, By='', stp=nan, R=nan):   return Roll(Df, Col, _mean,      win, wmin, By, stp, R)
-def Std       (Df, Col, win, wmin, By='', stp=nan, R=nan):   return Roll(Df, Col, _std,       win, wmin, By, stp, R)
+def _roll_mean      (Df, Col, win, wmin, By='', stp=nan, R=nan):   return _roll(Df, Col, _mean,      win, wmin, By, stp, R)
+def _roll_std       (Df, Col, win, wmin, By='', stp=nan, R=nan):   return _roll(Df, Col, _std,       win, wmin, By, stp, R)
 
-def Gmean     (Df, Col, win, wmin, By='', stp=nan, R=nan):   return Roll(Df, Col, _gmean,     win, wmin, By, stp, R)
-def Gstd      (Df, Col, win, wmin, By='', stp=nan, R=nan):   return Roll(Df, Col, _gstd,      win, wmin, By, stp, R)
+def _roll_gmean     (Df, Col, win, wmin, By='', stp=nan, R=nan):   return _roll(Df, Col, _gmean,     win, wmin, By, stp, R)
+def _roll_gstd      (Df, Col, win, wmin, By='', stp=nan, R=nan):   return _roll(Df, Col, _gstd,      win, wmin, By, stp, R)
 
-def Pct_Gmean (Df, Col, win, wmin, By='', stp=nan, R=nan):   return Roll(Df, Col, _pct_gmean, win, wmin, By, stp, R)
-def Pct_Gstd  (Df, Col, win, wmin, By='', stp=nan, R=nan):   return Roll(Df, Col, _pct_gstd,  win, wmin, By, stp, R)
+def _roll_pct_gmean (Df, Col, win, wmin, By='', stp=nan, R=nan):   return _roll(Df, Col, _pct_gmean, win, wmin, By, stp, R)
+def _roll_pct_gstd  (Df, Col, win, wmin, By='', stp=nan, R=nan):   return _roll(Df, Col, _pct_gstd,  win, wmin, By, stp, R)
 
-def Med       (Df, Col, win, wmin, By='', stp=nan, R=nan):   return Roll(Df, Col, _med,       win, wmin, By, stp, R)
-def Mad       (Df, Col, win, wmin, By='', stp=nan, R=nan):   return Roll(Df, Col, _mad,       win, wmin, By, stp, R)
+def _roll_med       (Df, Col, win, wmin, By='', stp=nan, R=nan):   return _roll(Df, Col, _med,       win, wmin, By, stp, R)
+def _roll_mad       (Df, Col, win, wmin, By='', stp=nan, R=nan):   return _roll(Df, Col, _mad,       win, wmin, By, stp, R)
 
-def Max       (Df, Col, win, wmin, By='', stp=nan, R=nan):   return Roll(Df, Col, _max,       win, wmin, By, stp, R)
-def Min       (Df, Col, win, wmin, By='', stp=nan, R=nan):   return Roll(Df, Col, _min,       win, wmin, By, stp, R)
+def _roll_max       (Df, Col, win, wmin, By='', stp=nan, R=nan):   return _roll(Df, Col, _max,       win, wmin, By, stp, R)
+def _roll_min       (Df, Col, win, wmin, By='', stp=nan, R=nan):   return _roll(Df, Col, _min,       win, wmin, By, stp, R)
 
-def Q3        (Df, Col, win, wmin, By='', stp=nan, R=nan):   return Roll(Df, Col, _Q3,        win, wmin, By, stp, R)
-def Q1        (Df, Col, win, wmin, By='', stp=nan, R=nan):   return Roll(Df, Col, _Q1,        win, wmin, By, stp, R)
+def _roll_Q3        (Df, Col, win, wmin, By='', stp=nan, R=nan):   return _roll(Df, Col, _Q3,        win, wmin, By, stp, R)
+def _roll_Q1        (Df, Col, win, wmin, By='', stp=nan, R=nan):   return _roll(Df, Col, _Q1,        win, wmin, By, stp, R)
 
-def Range     (Df, Col, win, wmin, By='', stp=nan, R=nan):   return _Range(Max=Max(Df, Col, win), Min=Min(Df, Col, win))  .round(R)
-def IQR       (Df, Col, win, wmin, By='', stp=nan, R=nan):   return   _IQR( Q3= Q3(Df, Col, win),  Q1= Q1(Df, Col, win))  .round(R)
+def _roll_range     (Df, Col, win, wmin, By='', stp=nan, R=nan):   return _range(Max=_roll_max(Df, Col, win), Min=_roll_min(Df, Col, win))  .round(R)
+def _roll_iqr       (Df, Col, win, wmin, By='', stp=nan, R=nan):   return   _IQR( Q3= _roll_Q3(Df, Col, win),  Q1= _roll_Q1(Df, Col, win))  .round(R)
 
 
 
-def Minmax(Df, Col, win, R=3):     return       _minmax(Val=Df[Col],  Min=      Min(Df, Col, win),  Range= Range(Df, Col, win)) .round(R)
-def Robust(Df, Col, win, R=3):     return       _robust(val=Df[Col],  med=      Med(Df, Col, win),  IQR=     IQR(Df, Col, win)) .round(R)
-def Zscore(Df, Col, win, R=3):     return       _zscore(val=Df[Col],  avg=     Mean(Df, Col, win),  dev=     Std(Df, Col, win)) .round(R)
-def Pct_Gscore(Df, Col, win, R=3): return _log1p_zscore(val=Df[Col],  avg=Pct_Gmean(Df, Col, win),  dev=Pct_Gstd(Df, Col, win)) .round(R)
+def _roll_minmax     (Df, Col, win, R=3):  return       _minmax(Val=Df[Col],  Min=      _roll_min(Df, Col, win),  Range= _roll_range(Df, Col, win)) .round(R)
+def _roll_robust     (Df, Col, win, R=3):  return       _robust(val=Df[Col],  med=      _roll_med(Df, Col, win),  IQR=     _roll_iqr(Df, Col, win)) .round(R)
+def _roll_zscore     (Df, Col, win, R=3):  return       _zscore(val=Df[Col],  avg=     _roll_mean(Df, Col, win),  dev=     _roll_std(Df, Col, win)) .round(R)
+def _roll_pct_gscore (Df, Col, win, R=3):  return _log1p_zscore(val=Df[Col],  avg=_roll_pct_gmean(Df, Col, win),  dev=_roll_pct_gstd(Df, Col, win)) .round(R)
 
-def Pscore(Df, Col, win):          return Roll(Df, Col, win, lambda X: _pscore(val=X.tail(1), series=X))
+def _roll_pscore     (Df, Col, win):       return _roll(Df, Col, win, lambda X: _pscore(val=X.tail(1), series=X))
