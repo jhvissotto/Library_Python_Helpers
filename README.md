@@ -67,7 +67,21 @@ def _parquet(CASES:Lit['COMPUTE','RELOAD','LOAD'], Lambda, dirs=[], name='', ext
 ```
 
 
-## Functions 1
+## Text Functions
+
+```py
+def _replaces(txt:str, args:List[Tuple[str, str]]):
+    
+    for (old, new) in args:
+        txt = txt.replace(old, new)
+
+    return txt
+
+```
+
+
+
+## Math Functions 1
 
 ```py
 def _step(X, stp=nan): 
@@ -128,7 +142,7 @@ def _log1p_zscore(val, avg, dev):   return (log(1+val/100) - log(1+avg/100)) / l
 ```
 
 
-## Functions 2
+## Math Functions 2
 
 ```py
 def _groupby(Df, By=''):
