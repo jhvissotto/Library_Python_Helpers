@@ -49,6 +49,10 @@ def _parquet(CASES:Lit['COMPUTE','RELOAD','LOAD'], Lambda, dirs=[], name='', ext
 # ================================================================ #
 # ======================== Text Functions ======================== #
 # ================================================================ #
+def _between(txt:str, A:str, Z:str):
+    return txt.split(A)[1].split(Z)[0]
+
+
 def _replaces(txt:str, args:List[Tuple[str, str]]):
     
     for (old, new) in args:
