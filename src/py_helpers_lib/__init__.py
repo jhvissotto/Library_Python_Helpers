@@ -130,8 +130,19 @@ def _groupby(Df, By=''):
     if By:  return Df.groupby(By, sort=0, group_keys=0, dropna=0)
     else:   return Df
 
+def _apply(Df, Lambda, By='', stp=nan, R=nan):
+    return _round(_groupby(_step(Df, stp), By).apply(Lambda), R)
+
 def _roll(Df, Col, Lambda, win, wmin, By='', stp=nan, R=nan):
     return _round(_groupby(_step(Df, stp), By)[Col].rolling(win, wmin).apply(Lambda).reset_index(0,drop=1), R)
+
+
+
+def _diff(Df, Col, P=1, By='', stp=nan, R=nan):
+    return _round(_groupby(_step(Df, stp), By)[Col].diff(P), R)
+
+def _pct_change(Df, Col, P=1, By='', base=100, stp=nan, R=nan):
+    return _round(_groupby(_step(Df, stp), By)[Col].pct_change(P).mul(base), R)
 
 
 
