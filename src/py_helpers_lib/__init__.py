@@ -69,12 +69,12 @@ def _replaces(txt:str, args:List[Tuple[str, str]]):
 # ======================== Math Functions 1 ======================== #
 # ================================================================== #
 def _step(X, stp=nan): 
-    if isinstance(X, int) and (X < 0) or (1 < X):
+    if isinstance(stp, int) and (stp < 0 or 1 < stp):
             return X[::stp]
     else:   return X
 
 def _round(x, R=nan):
-    if isinstance(x, int) and (x >= 0):
+    if isinstance(R, int) and (R >= 0):
             return np.round(x, R)
     else:   return x
 
