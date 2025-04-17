@@ -92,18 +92,20 @@ def _replaces(txt:str, args:List[Tuple[str, str]]):
 
 ```py
 def _step(X, stp=nan): 
-    if isinstance(X, int) and (X < 0) or (1 < X):
+    if isinstance(stp, int) and (stp < 0 or 1 < stp):
             return X[::stp]
     else:   return X
 
 def _round(x, R=nan):
-    if isinstance(x, int) and (x >= 0):
+    if isinstance(R, int) and (R >= 0):
             return np.round(x, R)
     else:   return x
 ```
 
 
 ```py
+def _count(x):      return pd.Series(x).count()
+
 def _sum(x):        return np.nansum(x)
 def _prod(x):       return np.nanprod(x)
 
@@ -168,7 +170,7 @@ def _pct_change(Df, Col, P=1, By='', base=100, stp=nan, R=nan):  return _round(_
 
 
 ```py
-def _cum_count      (Df, Col,            By=''                 ):  return  _cum(Df, Col,  len,                  By)
+def _cum_count      (Df, Col,            By=''                 ):  return  _cum(Df, Col, _count,                By)
 def _cum_pct_prod   (Df, Col,            By=''                 ):  return  _cum(Df, Col, _pct_prod,             By)
 
 def _roll_mean      (Df, Col, win, wmin, By='', stp=nan, R=nan):   return _roll(Df, Col, _mean,      win, wmin, By, stp, R)

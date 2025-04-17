@@ -12,7 +12,6 @@ from numpy import exp, log
 # ======================================== #
 # ================ System ================ #
 # ======================================== #
-
 HEADERS = { 'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36', 'X-Requested-With':'XMLHttpRequest' }
 
 def _pickle(CASES:Lit['COMPUTE','RELOAD','LOAD'], Lambda, dirs=[], name='', ext='.pkl', *a,**b):
@@ -49,7 +48,6 @@ def _parquet(CASES:Lit['COMPUTE','RELOAD','LOAD'], Lambda, dirs=[], name='', ext
 # ================================================ #
 # ================ Text Functions ================ #
 # ================================================ #
-
 def _between(txt:str, A:str, Z:str):
     return txt.split(A)[1].split(Z)[0]
 
@@ -66,7 +64,6 @@ def _replaces(txt:str, args:List[Tuple[str, str]]):
 # ================================================= #
 # ================ Math Formulas 1 ================ #
 # ================================================= #
-
 def _step(X, stp=nan): 
     if isinstance(stp, int) and (stp < 0 or 1 < stp):
             return X[::stp]
@@ -78,6 +75,8 @@ def _round(x, R=nan):
     else:   return x
 
 
+
+def _count(x):        return pd.Series(x).count()
 
 def _sum(x):          return np.nansum(x)
 def _prod(x):         return np.nanprod(x)
@@ -123,7 +122,6 @@ def _log1p_zscore(val, avg, dev):   return (log(1+val/100) - log(1+avg/100)) / l
 # ================================================= #
 # ================ Math Formulas 2 ================ #
 # ================================================= #
-
 def _groupby(Df, By=''):
     if By:  return Df.groupby(By, sort=0, group_keys=0, dropna=0)
     else:   return Df
@@ -140,7 +138,7 @@ def _pct_change(Df, Col, P=1, By='', base=100, stp=nan, R=nan):  return _round(_
 
 
 
-def _cum_count      (Df, Col,            By=''                 ):  return  _cum(Df, Col,  len,                  By)
+def _cum_count      (Df, Col,            By=''                 ):  return  _cum(Df, Col, _count,                By)
 def _cum_pct_prod   (Df, Col,            By=''                 ):  return  _cum(Df, Col, _pct_prod,             By)
 
 def _roll_mean      (Df, Col, win, wmin, By='', stp=nan, R=nan):   return _roll(Df, Col, _mean,      win, wmin, By, stp, R)
@@ -177,7 +175,6 @@ def _roll_pscore     (Df, Col, win, wmin, By='', stp=nan, R=nan):  return _roll(
 # ================================================== #
 # ================ Pandas Dataframe ================ #
 # ================================================== #
-
 def _columns(Df, A, Z): 
     return Df.loc[:, A:Z].columns
 
