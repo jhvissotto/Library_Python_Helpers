@@ -9,12 +9,11 @@ from numpy import nan, inf
 from numpy import exp, log
 
 
+# ======================================== #
+# ================ System ================ #
+# ======================================== #
 
-# ======================================================== #
-# ======================== System ======================== #
-# ======================================================== #
 HEADERS = { 'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36', 'X-Requested-With':'XMLHttpRequest' }
-
 
 def _pickle(CASES:Lit['COMPUTE','RELOAD','LOAD'], Lambda, dirs=[], name='', ext='.pkl', *a,**b):
 
@@ -30,7 +29,6 @@ def _pickle(CASES:Lit['COMPUTE','RELOAD','LOAD'], Lambda, dirs=[], name='', ext=
     if (CASES == 'LOAD'):
         if     EXISTS:          return _read()
         if not EXISTS:          return _save(_calc())
-
 
 def _parquet(CASES:Lit['COMPUTE','RELOAD','LOAD'], Lambda, dirs=[], name='', ext='.parquet', *a,**b):
 
@@ -48,10 +46,10 @@ def _parquet(CASES:Lit['COMPUTE','RELOAD','LOAD'], Lambda, dirs=[], name='', ext
         if not EXISTS:          return _save(_calc())
 
 
+# ================================================ #
+# ================ Text Functions ================ #
+# ================================================ #
 
-# ================================================================ #
-# ======================== Text Functions ======================== #
-# ================================================================ #
 def _between(txt:str, A:str, Z:str):
     return txt.split(A)[1].split(Z)[0]
 
@@ -65,9 +63,10 @@ def _replaces(txt:str, args:List[Tuple[str, str]]):
 
 
 
-# ================================================================== #
-# ======================== Math Functions 1 ======================== #
-# ================================================================== #
+# ================================================= #
+# ================ Math Formulas 1 ================ #
+# ================================================= #
+
 def _step(X, stp=nan): 
     if isinstance(stp, int) and (stp < 0 or 1 < stp):
             return X[::stp]
@@ -80,33 +79,31 @@ def _round(x, R=nan):
 
 
 
-def _sum(x):        return np.nansum(x)
-def _prod(x):       return np.nanprod(x)
+def _sum(x):          return np.nansum(x)
+def _prod(x):         return np.nanprod(x)
 
-def _cumsum(x):     return np.nancumsum(x)
-def _cumprod(x):    return np.nancumprod(x)
+def _cumsum(x):       return np.nancumsum(x)
+def _cumprod(x):      return np.nancumprod(x)
 
-def _mean(x):       return np.nanmean(x)
-def _std(x):        return np.nanstd(x)
+def _mean(x):         return np.nanmean(x)
+def _std(x):          return np.nanstd(x)
 
-def _gmean(x):      return exp(np.nanmean(log(x)))
-def _gstd(x):       return exp(np.nanstd(log(x)))
+def _gmean(x):        return exp(np.nanmean(log(x)))
+def _gstd(x):         return exp(np.nanstd(log(x)))
 
-def _med(x):        return np.nanmedian(x)
-def _mad(x):        return sp_stats.median_abs_deviation(x, nan_policy='omit')
+def _med(x):          return np.nanmedian(x)
+def _mad(x):          return sp_stats.median_abs_deviation(x, nan_policy='omit')
 
-def _max(x):        return np.nanmax(x)
-def _min(x):        return np.nanmin(x)
+def _max(x):          return np.nanmax(x)
+def _min(x):          return np.nanmin(x)
 
-def _Q3(x):         return np.nanpercentile(x, 75)
-def _Q1(x):         return np.nanpercentile(x, 25)
+def _Q3(x):           return np.nanpercentile(x, 75)
+def _Q1(x):           return np.nanpercentile(x, 25)
 
-
-
-def _pct(x, Lambda): return Lambda(1+x/100)*100-100
-
-def _pct_gmean(x):   return _pct(x, _gmean)
-def _pct_gstd(x):    return _pct(x, _gstd)
+def _pct_prod(x):     return    _prod(1+x/100)
+def _pct_cumprod(x):  return _cumprod(1+x/100)
+def _pct_gmean(x):    return   _gmean(1+x/100)*100-100
+def _pct_gstd(x):     return    _gstd(1+x/100)*100-100
 
 
 
@@ -123,28 +120,28 @@ def _log1p_zscore(val, avg, dev):   return (log(1+val/100) - log(1+avg/100)) / l
 
 
 
-# ================================================================== #
-# ======================== Math Functions 2 ======================== #
-# ================================================================== #
+# ================================================= #
+# ================ Math Formulas 2 ================ #
+# ================================================= #
+
 def _groupby(Df, By=''):
     if By:  return Df.groupby(By, sort=0, group_keys=0, dropna=0)
     else:   return Df
 
-def _apply(Df, Lambda, By='', stp=nan, R=nan):
-    return _round(_groupby(_step(Df, stp), By).apply(Lambda), R)
-
-def _roll(Df, Col, Lambda, win, wmin, By='', stp=nan, R=nan):
-    return _round(_groupby(_step(Df, stp), By)[Col].rolling(win, wmin).apply(Lambda).reset_index(0,drop=1), R)
+def _apply(Df,      Lambda,            By='', stp=nan, R=nan):  return _round(_groupby(_step(Df, stp), By)                        .apply(Lambda),                       R)
+def   _cum(Df, Col, Lambda,            By='', stp=nan, R=nan):  return _round(_groupby(_step(Df, stp), By)[Col].expanding()       .apply(Lambda).reset_index(0,drop=1), R)
+def  _roll(Df, Col, Lambda, win, wmin, By='', stp=nan, R=nan):  return _round(_groupby(_step(Df, stp), By)[Col].rolling(win, wmin).apply(Lambda).reset_index(0,drop=1), R)
 
 
 
-def _diff(Df, Col, P=1, By='', stp=nan, R=nan):
-    return _round(_groupby(_step(Df, stp), By)[Col].diff(P), R)
-
-def _pct_change(Df, Col, P=1, By='', base=100, stp=nan, R=nan):
-    return _round(_groupby(_step(Df, stp), By)[Col].pct_change(P).mul(base), R)
+def      _shift(Df, Col, P,   By=''                          ):  return        _groupby(      Df,       By)[Col]      .shift(P)
+def       _diff(Df, Col, P=1, By='',           stp=nan, R=nan):  return _round(_groupby(_step(Df, stp), By)[Col]       .diff(P),           R)
+def _pct_change(Df, Col, P=1, By='', base=100, stp=nan, R=nan):  return _round(_groupby(_step(Df, stp), By)[Col] .pct_change(P).mul(base), R)
 
 
+
+def _cum_count      (Df, Col,            By=''                 ):  return  _cum(Df, Col,  len,                  By)
+def _cum_pct_prod   (Df, Col,            By=''                 ):  return  _cum(Df, Col, _pct_prod,             By)
 
 def _roll_mean      (Df, Col, win, wmin, By='', stp=nan, R=nan):   return _roll(Df, Col, _mean,      win, wmin, By, stp, R)
 def _roll_std       (Df, Col, win, wmin, By='', stp=nan, R=nan):   return _roll(Df, Col, _std,       win, wmin, By, stp, R)
@@ -168,10 +165,31 @@ def _roll_range     (Df, Col, win, wmin, By='', stp=nan, R=nan):   return _round
 def _roll_iqr       (Df, Col, win, wmin, By='', stp=nan, R=nan):   return _round(  _IQR( Q3= _roll_Q3(Df, Col, win, wmin, By, stp),  Q1= _roll_Q1(Df, Col, win, wmin, By, stp)), R)
 
 
-
 def _roll_minmax     (Df, Col, win, wmin, By='', stp=nan, R=nan):  return _round(      _minmax(Val=Df[Col],  Min=      _roll_min(Df, Col, win, wmin, By, stp),  Range= _roll_range(Df, Col, win, wmin, By, stp)), R)
 def _roll_robust     (Df, Col, win, wmin, By='', stp=nan, R=nan):  return _round(      _robust(val=Df[Col],  med=      _roll_med(Df, Col, win, wmin, By, stp),  IQR=     _roll_iqr(Df, Col, win, wmin, By, stp)), R)
 def _roll_zscore     (Df, Col, win, wmin, By='', stp=nan, R=nan):  return _round(      _zscore(val=Df[Col],  avg=     _roll_mean(Df, Col, win, wmin, By, stp),  dev=     _roll_std(Df, Col, win, wmin, By, stp)), R)
 def _roll_pct_gscore (Df, Col, win, wmin, By='', stp=nan, R=nan):  return _round(_log1p_zscore(val=Df[Col],  avg=_roll_pct_gmean(Df, Col, win, wmin, By, stp),  dev=_roll_pct_gstd(Df, Col, win, wmin, By, stp)), R)
 
 def _roll_pscore     (Df, Col, win, wmin, By='', stp=nan, R=nan):  return _roll(Df, Col, lambda X: _pscore(val=X.tail(1), series=X), win, wmin, By, stp, R)
+
+
+
+# ================================================== #
+# ================ Pandas Dataframe ================ #
+# ================================================== #
+
+def _columns(Df, A, Z): 
+    return Df.loc[:, A:Z].columns
+
+def _insert(Df, idx, Col, Val):
+    if Col in Df:   Df[Col] = Val
+    else:           Df.insert(idx, Col, Val)
+
+def _get_group(Df, Get, By):
+    return _groupby(Df, By).get_group(Get) .reset_index(0,drop=1)
+
+
+
+def _rank      (Df, Col, By, method='dense', ascending=True): return _groupby(Df, By)[Col].rank(method,  ascending)
+def _rank_high (Df, Col, By, method='dense'):                 return _groupby(Df, By)[Col].rank(method, False)
+def _rank_low  (Df, Col, By, method='dense'):                 return _groupby(Df, By)[Col].rank(method,  True)
