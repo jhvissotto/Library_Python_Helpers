@@ -71,6 +71,59 @@ def _parquet(CASES:Lit['COMPUTE','RELOAD','LOAD'], Lambda, dirs=[], name='', ext
 ```
 
 
+## Casting
+
+```py
+def _to_bool(x:bool|int|float|str, 
+    on_fail:      Lit['raise','none','false','alt',] = 'raise', 
+    alt:          (None|bool)                        = None,
+    extra_trues:  list[str]                          = [],
+    extra_falses: list[str]                          = [], 
+    ERR                                              = 'NOT_LIKE_AS_TRUE_OR_FALSE',
+) -> bool: 
+
+    if str(x).lower() in ['true','1','1.0','t','y','yes',*extra_trues]:  
+        return True
+
+    if str(x).lower() in ['false','0','0.0','f','n','no',*extra_falses]:  
+        return False
+
+    if on_fail == 'raise':  raise  Exception(ERR)
+    if on_fail == 'none':   return None
+    if on_fail == 'false':  return False
+    if on_fail == 'alt':    return alt
+```
+
+```py
+def _to_logic(x:bool|int|float|str, 
+    astype:       Lit['bool','int']                           = 'bool', 
+    on_fail:      Lit['raise','none','false','0','-1','alt',] = 'raise', 
+    alt:          (None|bool|int)                             = None,
+    extra_trues:  list[str]                                   = [],
+    extra_falses: list[str]                                   = [], 
+    ERR                                                       = 'NOT_LIKE_AS_TRUE_OR_FALSE',
+) -> (bool|int): 
+
+
+    if str(x).lower() in ['true','1','1.0','t','y','yes',*extra_trues]:  
+        if astype == 'bool':  return True
+        if astype == 'int':   return 1
+
+
+    if str(x).lower() in ['false','0','0.0','f','n','no',*extra_falses]:  
+        if astype == 'bool':  return False
+        if astype == 'int':   return 0
+
+
+    if on_fail == 'raise':  raise  Exception(ERR)
+    if on_fail == 'none':   return None
+    if on_fail == 'false':  return False
+    if on_fail == '0':      return  0
+    if on_fail == '-1':     return -1
+    if on_fail == 'alt':    return alt
+```
+
+
 ## Text Functions
 
 ```py
